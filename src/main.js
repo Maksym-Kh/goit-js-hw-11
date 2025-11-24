@@ -28,32 +28,47 @@ const onFormInter = evt => {
     
 
     clearGallery();   
+
+    if (query === '') {
+        iziToast.error({
+            message: "Будь ласка, введіть пошуковий запит!",
+            messageColor: "#ffffff",
+            backgroundColor: "#EF4040",
+            timeout: 5000,
+            titleColor: "#fff",
+            iconUrl: errorSvg,
+            position: "topRight",
+        });
+        return;
+}
+
     showLoader();
-
     getImagesByQuery(query).then(response => {
-        const imageArr = response.data.hits;
-
-hideLoader();
-       
+        const imageArr = response.hits;
 
         if (imageArr.length === 0) {
-                iziToast.error({
-                    message: "Sorry, there are no images matching your search query. Please try again!",
-                    messageColor: "#ffffff",
-                    backgroundColor: "#EF4040",
-                    timeout: 5000,
-                    titleColor: "#fff",
-                    iconUrl: errorSvg,
-                    position: "topRight",
-                })
+            iziToast.error({
+                message: "Sorry, there are no images matching your search query. Please try again!",
+                messageColor: "#ffffff",
+                backgroundColor: "#EF4040",
+                timeout: 5000,
+                titleColor: "#fff",
+                iconUrl: errorSvg,
+                position: "topRight",
+            });
+            return;
         };
 
+        hideLoader();
         createGallery(imageArr);
         
         
     }).catch(err => {
         hideLoader();
         console.error(err);
+    }).finally(() => {
+        hideLoader();
+        refs.form.reset();
     });
  
 }
